@@ -2,3 +2,5 @@ RGBLIGHT_ENABLE = yes
 RGB_MATRIX_ENABLE = no
 OLED_ENABLE = yes
 SERIAL_DRIVER = bitbang
+WPM_ENABLE = yes
+SRC += ocean_dream.c

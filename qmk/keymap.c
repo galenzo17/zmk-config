@@ -91,52 +91,56 @@ void housekeeping_task_user(void) {
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     if (keycode == OLED_ANM && record->event.pressed) {
-        oled_anim = (oled_anim + 1) % 2;
+        oled_anim = (oled_anim + 1) % 3;
     }
     return true;
 }
 
 #ifdef OLED_ENABLE
 
-// Anim 0: typing "> just code"
+#include "ocean_dream.h"
+
+// Anim 0: typing vertical
 static void render_typing(void) {
     static uint32_t timer = 0;
     static uint8_t pos = 0;
     static bool show_cursor = true;
-    static const char PROGMEM text[] = "> just code";
-    const uint8_t len = 11;
+    static const char PROGMEM text[] = "just code";
+    const uint8_t len = 9;
 
-    if (timer_elapsed32(timer) > 150) {
+    if (timer_elapsed32(timer) > 200) {
         timer = timer_read32();
         pos++;
         show_cursor = !show_cursor;
-        if (pos > len + 8) {
+        if (pos > len + 6) {
             pos = 0;
-            oled_set_cursor(0, 0);
-            oled_write_P(PSTR("                     "), false);
+            for (uint8_t i = 0; i < len + 1; i++) {
+                oled_set_cursor(0, i);
+                oled_write_P(PSTR("     "), false);
+            }
         }
     }
 
-    oled_set_cursor(0, 0);
     for (uint8_t i = 0; i < pos && i < len; i++) {
-        oled_write_char(pgm_read_byte(&text[i]), false);
+        oled_set_cursor(1, i + 1);
+        char c = pgm_read_byte(&text[i]);
+        oled_write_char(c, false);
     }
-    if (pos <= len && show_cursor) {
-        oled_write_char('_', false);
-    } else if (pos <= len) {
-        oled_write_char(' ', false);
+    if (pos <= len) {
+        oled_set_cursor(1, pos + 1);
+        oled_write_char(show_cursor ? '_' : ' ', false);
     }
 
-    oled_set_cursor(0, 3);
+    oled_set_cursor(0, 14);
     switch (get_highest_layer(layer_state)) {
         case _BASE: oled_write_P(PSTR("base"), false); break;
-        case _NAV:  oled_write_P(PSTR("nav"), false); break;
-        case _SYM:  oled_write_P(PSTR("sym"), false); break;
-        case _NUM:  oled_write_P(PSTR("num"), false); break;
+        case _NAV:  oled_write_P(PSTR(" nav"), false); break;
+        case _SYM:  oled_write_P(PSTR(" sym"), false); break;
+        case _NUM:  oled_write_P(PSTR(" num"), false); break;
     }
 }
 
-// Anim 1: Luna dog (adapted for landscape 128x32)
+// Anim 1: Luna dog (portrait native)
 #define LUNA_SIZE 96
 #define LUNA_FRAME_DURATION 200
 
@@ -201,17 +205,11 @@ static char const luna_bark[][LUNA_SIZE] PROGMEM = { {
     0x04,0x08,0x10,0x26,0x2b,0x32,0x04,0x05,0x06,0x00,0x00,0x00,0x00,0x00,0x00,0x00
 } };
 
-static void luna_draw(char const action[][LUNA_SIZE]) {
+static void luna_action(char const action[][LUNA_SIZE]) {
     static uint8_t frame = 0;
     frame = (frame + 1) & 1;
-    for (uint8_t page = 0; page < 3; page++) {
-        for (uint8_t col = 0; col < 32; col++) {
-            oled_write_raw_byte(
-                pgm_read_byte(&action[frame][page * 32 + col]),
-                page * 128 + col
-            );
-        }
-    }
+    oled_set_cursor(0, 13);
+    oled_write_raw_P(action[frame], LUNA_SIZE);
 }
 
 static void render_luna(void) {
@@ -223,18 +221,36 @@ static void render_luna(void) {
     bool     caps = host_keyboard_led_state().caps_lock;
     uint32_t idle = timer_elapsed32(last_matrix_activity_time());
 
-    if (mods & MOD_MASK_SHIFT || caps)  luna_draw(luna_bark);
-    else if (mods & MOD_MASK_CAG)       luna_draw(luna_run);
-    else if (idle < 400)                luna_draw(luna_walk);
-    else                                luna_draw(luna_sit);
+    // Logo top
+    oled_set_cursor(0, 0);
+    oled_write_P(PSTR("corne"), false);
 
-    oled_set_cursor(6, 1);
+    // Layer
+    oled_set_cursor(0, 2);
     switch (get_highest_layer(layer_state)) {
-        case _BASE: oled_write_P(PSTR("base"), false); break;
-        case _NAV:  oled_write_P(PSTR("nav"), false); break;
-        case _SYM:  oled_write_P(PSTR("sym"), false); break;
-        case _NUM:  oled_write_P(PSTR("num"), false); break;
+        case _BASE: oled_write_P(PSTR("BASE "), false); break;
+        case _NAV:  oled_write_P(PSTR("NAV  "), false); break;
+        case _SYM:  oled_write_P(PSTR("SYM  "), false); break;
+        case _NUM:  oled_write_P(PSTR("NUM  "), false); break;
     }
+
+    // Luna at bottom
+    if (mods & MOD_MASK_SHIFT || caps)  luna_action(luna_bark);
+    else if (mods & MOD_MASK_CAG)       luna_action(luna_run);
+    else if (idle < 400)                luna_action(luna_walk);
+    else                                luna_action(luna_sit);
+}
+
+// Anim 2: Ocean Dream (from mctechnology17)
+static void render_ocean(void) {
+    render_stars();
+}
+
+oled_rotation_t oled_init_user(oled_rotation_t rotation) {
+    if (!is_keyboard_master()) {
+        return OLED_ROTATION_270;
+    }
+    return rotation;
 }
 
 bool oled_task_user(void) {
@@ -251,6 +267,7 @@ bool oled_task_user(void) {
     switch (oled_anim) {
         case 0: render_typing(); break;
         case 1: render_luna(); break;
+        case 2: render_ocean(); break;
     }
     return false;
 }
