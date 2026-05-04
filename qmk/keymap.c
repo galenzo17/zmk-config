@@ -60,11 +60,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //,-----------------------------------------------------.                    ,-----------------------------------------------------.
       _______,    KC_1,    KC_2,    KC_3,    KC_4,    KC_5,                         KC_6,    KC_7,    KC_8,    KC_9,    KC_0, _______,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-      _______,   KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,                      KC_LEFT, KC_DOWN,   KC_UP, KC_RGHT, RM_HUEU, RM_HUED,
+      _______,   KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,                      KC_LEFT, KC_DOWN,   KC_UP, KC_RGHT, UG_HUEU, UG_HUED,
   //|--------+--------+--------+--------+--------+--------|                    |--------+--------+--------+--------+--------+--------|
-      _______,   KC_F7,   KC_F8,   KC_F9,  KC_F10,  KC_F11,                      KC_VOLD, KC_VOLU, KC_MUTE, KC_MPLY, RM_NEXT, QK_BOOT,
+      _______,   KC_F7,   KC_F8,   KC_F9,  KC_F10,  KC_F11,                      KC_VOLD, KC_VOLU, KC_MUTE, KC_MPLY, UG_NEXT, QK_BOOT,
   //|--------+--------+--------+--------+--------+--------+--------|  |--------+--------+--------+--------+--------+--------+--------|
-                                          RM_TOGG, _______, RM_VALU,   _______, RM_VALD, OLED_ANM
+                                          UG_TOGG, _______, UG_VALU,   _______, UG_VALD, OLED_ANM
                                       //`--------------------------'  `--------------------------'
   )
 };
@@ -75,6 +75,8 @@ static void oled_sync_handler(uint8_t in_buflen, const void *in_data, uint8_t ou
 
 void keyboard_post_init_user(void) {
     transaction_register_rpc(OLED_SYNC, oled_sync_handler);
+    rgblight_sethsv_noeeprom(170, 255, 120);
+    rgblight_mode_noeeprom(RGBLIGHT_MODE_STATIC_LIGHT);
 }
 
 void housekeeping_task_user(void) {
