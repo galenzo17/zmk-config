@@ -92,19 +92,31 @@ Numeros, F-keys, media, RGB.
           └───┴───┴───┘          └───┴───┴───┘
 ```
 
+## OLED Animaciones (derecha)
+
+2 animaciones switcheables con **NUM + thumb der externo (ANM)**:
+
+| Anim | Descripcion |
+|------|-------------|
+| 0 - Typing | "> just code" con cursor parpadeante + layer |
+| 1 - Luna | Perro animado que reacciona: sentada (idle), camina (tipeando), corre (Ctrl/Alt/GUI), ladra (Shift/CapsLock) |
+
+La OLED izquierda muestra layer + keylog (default QMK).
+
 ## Features
 
 - **RGB underglow**: Default azul (HUE 170), efectos breathing/rainbow/snake
-- **OLED**: Habilitadas en ambos lados
-- **Split**: EE_HANDS, SERIAL_DRIVER bitbang, SOFT_SERIAL_PIN D2
+- **OLED**: Ambas activas, derecha con animaciones custom
+- **Split sync**: Mods, LED state y layer state sincronizados entre mitades
+- **OLED sync**: Animacion seleccionada se sincroniza via RPC transaction
 - **Bootmagic**: Mantener Tab + conectar USB para resetear EEPROM
 
 ## Estructura del repo
 
 ```
 qmk/                    # Copia de respaldo del keymap QMK
-  keymap.c              # Keymap (4 layers)
-  config.h              # Config split + RGB
+  keymap.c              # Keymap (4 layers) + OLED animations + split sync
+  config.h              # Config split + RGB + OLED sync
   rules.mk              # Features habilitadas
 config/                 # Config ZMK (legacy, no activa con Pro Micro)
 ```
