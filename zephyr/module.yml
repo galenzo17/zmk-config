@@ -1,3 +1,5 @@
 build:
   settings:
     board_root: .
+  cmake: config/custom_display
+  kconfig: config/custom_display/Kconfig

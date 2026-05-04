@@ -1,5 +1,10 @@
 #pragma once
 
+#define EE_HANDS
+#define SPLIT_USB_DETECT
+#define SPLIT_USB_TIMEOUT 2500
+#define SOFT_SERIAL_PIN D2
+
 #ifdef RGBLIGHT_ENABLE
     #define RGBLIGHT_EFFECT_BREATHING
     #define RGBLIGHT_EFFECT_RAINBOW_MOOD
@@ -9,4 +14,7 @@
     #define RGBLIGHT_HUE_STEP 10
     #define RGBLIGHT_SAT_STEP 17
     #define RGBLIGHT_VAL_STEP 17
+    #define RGBLIGHT_DEFAULT_HUE 170
+    #define RGBLIGHT_DEFAULT_SAT 255
+    #define RGBLIGHT_DEFAULT_VAL 120
 #endif

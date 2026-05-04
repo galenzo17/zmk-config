@@ -1,0 +1,5 @@
+config CUSTOM_STATUS_SCREEN
+    bool "Custom status screen for peripheral display"
+    default y
+    depends on ZMK_DISPLAY
+    depends on ZMK_DISPLAY_STATUS_SCREEN_CUSTOM
