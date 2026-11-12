@@ -74,7 +74,30 @@ Flechas Vim (HJKL), Home/End/PgUp/PgDn, home row mods.
 
 ### Layer 2: SYM (mantener SPC o SYM)
 
-Simbolos: !@#$%^&*(), brackets, pipes, etc.
+Simbolos: !@#$%^&*(), brackets, pipes, etc. La tecla a la derecha de `\` (fila
+del medio, extremo derecho) escribe **ñ** (con Shift, **Ñ**).
+
+### ñ y tildes: layout del sistema
+
+La tecla ñ manda `AltGr+n`, asi que el sistema operativo tiene que usar el
+layout **English (US, alt. intl.)** (`us` variante `altgr-intl`). Con ese layout
+las teclas de programar (`' " ` ~`) siguen normales, sin dead keys, y el ALT
+del pulgar derecho (AltGr) da el resto del espanol:
+
+| Tecla | Resultado |
+|-------|-----------|
+| SYM + tecla ñ, o ALT der + n | ñ (con Shift, Ñ) |
+| ALT der + a e i o u | á é í ó ú |
+| ALT der + 1 | ¡ |
+| ALT der + / | ¿ |
+
+En GNOME:
+
+```bash
+gsettings set org.gnome.desktop.input-sources sources "[('xkb', 'us+altgr-intl')]"
+```
+
+En Arch sin GNOME (X11): `setxkbmap us -variant altgr-intl`.
 
 ### Layer 3: NUM (mantener thumb izq medio)
 
